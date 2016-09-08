@@ -14,10 +14,13 @@ public class Player {
 	
 	public Player(Socket s, boolean xPlayer){
 		sock = s;
+		
 		this.xPlayer = xPlayer;
 		try {
-			inStr = new ObjectInputStream(sock.getInputStream());
 			outStr = new ObjectOutputStream(sock.getOutputStream());
+			outStr.flush();
+			inStr = new ObjectInputStream(sock.getInputStream());
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
