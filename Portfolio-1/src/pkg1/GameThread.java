@@ -1,5 +1,6 @@
 package pkg1;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Random;
 
@@ -27,7 +28,21 @@ public class GameThread implements Runnable {
 	
 	@Override
 	public void run(){
-		
+		int move1 = 0;
+		int move2 = 0;
+		for(int i = 0; i < 9; i++){
+			try {
+				move1 = (int)player1.getInStr().readObject();
+				System.out.println("X player moves " + move1);
+				move2 = (int)player2.getInStr().readObject();
+				System.out.println("O player moves " + move2);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }
