@@ -45,6 +45,7 @@ public class GameClientGUI extends JFrame implements ActionListener {
 	public static void main(String[] args){
 		
 		try {
+			
 			Socket serverSocket = new Socket("localhost", 4444);
 			ClientThread ct = new ClientThread(serverSocket);
 			GameClientGUI gc = new GameClientGUI(ct);

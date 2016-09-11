@@ -7,9 +7,11 @@ import java.util.Random;
 public class GameThread implements Runnable {
 	Player player1;
 	Player player2;
+	Game game;
 	
 	public GameThread(Socket socket1, Socket socket2){
 		makePlayers(socket1, socket2);
+		game = new Game();
 	}
 	
 	private void makePlayers(Socket socket1, Socket socket2){
@@ -30,12 +32,37 @@ public class GameThread implements Runnable {
 	public void run(){
 		int move1 = 0;
 		int move2 = 0;
-		for(int i = 0; i < 9; i++){
+		int victor = 0;
+		boolean gameOver = false;
+		while (!gameOver) {
 			try {
 				move1 = (int)player1.getInStr().readObject();
+				game.move(move1, 1);
+				player1.getOutStr().writeObject(game.board);
 				System.out.println("X player moves " + move1);
+				victor = game.victor();
+				if (victor == 1) {
+					gameOver = true;
+					System.out.println("X player wins!");
+					break;
+				}
+				if (victor == 3) {
+					gameOver = true;
+					System.out.println("Draw!");
+					break;
+				}
 				move2 = (int)player2.getInStr().readObject();
+				game.move(move2, 2);
 				System.out.println("O player moves " + move2);
+				victor = game.victor();
+				if (victor == 2) {
+					gameOver = true;
+					System.out.println("O player wins!");
+				}
+				if (victor == 3) {
+					gameOver = true;
+					System.out.println("Draw!");
+				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

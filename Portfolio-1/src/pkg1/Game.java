@@ -1,0 +1,92 @@
+package pkg1;
+
+public class Game {
+
+	private enum state { empty, ex, oh }
+	private state[] board;
+	private int moves;
+	
+	public Game() {
+		board = new state[9];
+		clearBoard();
+	}
+	
+	private void clearBoard() {
+		for (int i = 0; i < board.length; i++) {
+			board[i] = state.empty;
+		}
+		moves = 0;
+	}
+	
+	//makes a move in space for player.
+	public void move(int space, int player) {
+		if (player == 1) {
+			board[space] = state.ex;
+		}
+		else if (player == 2) {
+			board[space] = state.oh;
+		}
+		moves++;
+	}
+	
+	//determines if there is a victor and returns the number of the victorious player. Returns 0 if no victor, 3 if draw.
+	public int victor() {
+		if (board[0] == state.ex && board[1] == state.ex && board[2] == state.ex) {
+			return 1;
+		}
+		else if (board[3] == state.ex && board[4] == state.ex && board[5] == state.ex) {
+			return 1;
+		}
+		else if (board[6] == state.ex && board[7] == state.ex && board[8] == state.ex) {
+			return 1;
+		}
+		else if (board[0] == state.ex && board[3] == state.ex && board[6] == state.ex) {
+			return 1;
+		}
+		else if (board[1] == state.ex && board[4] == state.ex && board[7] == state.ex) {
+			return 1;
+		}
+		else if (board[2] == state.ex && board[5] == state.ex && board[8] == state.ex) {
+			return 1;
+		}
+		else if (board[0] == state.ex && board[4] == state.ex && board[8] == state.ex) {
+			return 1;
+		}
+		else if (board[2] == state.ex && board[4] == state.ex && board[6] == state.ex) {
+			return 1;
+		}
+		
+		else if (board[0] == state.oh && board[1] == state.oh && board[2] == state.oh) {
+			return 2;
+		}
+		else if (board[3] == state.oh && board[4] == state.oh && board[5] == state.oh) {
+			return 2;
+		}
+		else if (board[6] == state.oh && board[7] == state.oh && board[8] == state.oh) {
+			return 2;
+		}
+		else if (board[0] == state.oh && board[3] == state.oh && board[6] == state.oh) {
+			return 2;
+		}
+		else if (board[1] == state.oh && board[4] == state.oh && board[7] == state.oh) {
+			return 2;
+		}
+		else if (board[2] == state.oh && board[5] == state.oh && board[8] == state.oh) {
+			return 2;
+		}
+		else if (board[0] == state.oh && board[4] == state.oh && board[8] == state.oh) {
+			return 2;
+		}
+		else if (board[2] == state.oh && board[4] == state.oh && board[6] == state.oh) {
+			return 2;
+		}
+		
+		else if (moves >= 9) {
+			return 3;
+		}
+		
+		else {
+			return 0;
+		}
+	}
+}
