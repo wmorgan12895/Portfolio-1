@@ -30,18 +30,22 @@ public class GameThread implements Runnable {
 	
 	@Override
 	public void run(){
+		player1.setGame(game);
+		player2.setGame(game);
 		int move1 = 0;
 		int move2 = 0;
 		int victor = 0;
 		boolean gameOver = false;
 		while (!gameOver) {
 			try {
+				 
+				player1.getOutStr().writeObject(player1.getBoard());
+				player2.getOutStr().writeObject(player2.getBoard());
 				move1 = (int)player1.getInStr().readObject();
 				game.move(move1, 1);
 				System.out.println("X player moves " + move1);
-				Game.state[] board = game.getBoard();
-				player1.getOutStr().writeObject(board);
-				player2.getOutStr().writeObject(board);
+				player1.getOutStr().writeObject(player1.getBoard());
+				player2.getOutStr().writeObject(player2.getBoard());
 				victor = game.victor();
 				if (victor == 1) {
 					gameOver = true;
@@ -56,9 +60,8 @@ public class GameThread implements Runnable {
 				move2 = (int)player2.getInStr().readObject();
 				game.move(move2, 2);
 				System.out.println("O player moves " + move2);
-				board = game.getBoard();
-				player1.getOutStr().writeObject(board);
-				player2.getOutStr().writeObject(board);
+				player1.getOutStr().writeObject(player1.getBoard());
+				player2.getOutStr().writeObject(player2.getBoard());
 				victor = game.victor();
 				if (victor == 2) {
 					gameOver = true;
