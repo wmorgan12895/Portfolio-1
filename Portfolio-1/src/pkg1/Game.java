@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 public class Game implements Serializable{
 
-	protected enum state { empty, ex, oh }
+	protected enum state { empty, ex, oh, ex_turn, oh_turn, your_turn, not_turn }
 	private state[] board;
 	private int moves;
 	private String[] messages = {"Your turn" , "You're opponent's turn" , "You've won!" , "You've lost!"};
 	
 	public Game() {
-		board = new state[9];
+		board = new state[10];
 		clearBoard();
 	}
 	
@@ -18,6 +18,7 @@ public class Game implements Serializable{
 		for (int i = 0; i < board.length; i++) {
 			board[i] = state.empty;
 		}
+		board[9] = state.ex_turn;
 		moves = 0;
 	}
 	
@@ -25,16 +26,18 @@ public class Game implements Serializable{
 	public void move(int space, int player) {
 		if (player == 1) {
 			board[space] = state.ex;
+			board[9] = state.oh_turn;
 		}
 		else if (player == 2) {
 			board[space] = state.oh;
+			board[9] = state.ex_turn;
 		}
 		moves++;
 	}
 	
 	public state[] getBoard() {
-		state[] states = new state[9];
-		for (int i = 0; i < 9; i++) {
+		state[] states = new state[10];
+		for (int i = 0; i < 10; i++) {
 			states[i] = board[i];
 		}
 		return states;

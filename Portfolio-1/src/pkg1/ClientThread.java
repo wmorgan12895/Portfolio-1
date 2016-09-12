@@ -30,14 +30,8 @@ public class ClientThread implements Runnable{
 	
 	public void send(int move){
 		try {
-			synchronized(this) {
-					this.wait();
-					outStr.writeObject(move);
-			}
-		} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-		} catch (IOException e) {
+			outStr.writeObject(move);
+		}catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -54,9 +48,11 @@ class Listener implements Runnable {
 	private Socket socket;
 	GameClientGUI gui;
 	ObjectOutputStream outStr;
+	ClientThread ct;
 	
 	public Listener(GameClientGUI gui, ClientThread ct) {
 		try {
+			this.ct = ct;
 			this.gui = gui;
 			this.socket = ct.getSocket();
 			this.outStr = ct.getOutStream();
@@ -71,13 +67,9 @@ class Listener implements Runnable {
 			//read board
 			Game.state[] game = null;
 			try {
-				synchronized(this) {
-				//reset outputstream
-				game = (Game.state[]) inStr.readObject();
-				outStr.reset();
-				this.notify();
+					game = (Game.state[]) inStr.readObject();
 				}
-			} catch (ClassNotFoundException e) {
+			catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();

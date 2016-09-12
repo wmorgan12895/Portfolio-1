@@ -17,6 +17,7 @@ public class GameClientGUI extends JFrame implements ActionListener {
 	private JButton[] button;
 	private JPanel gameBoard;
 	private ClientThread ct;
+	public Game.state turn;
 	
 	public GameClientGUI(ClientThread ct){
 		this.ct = ct;
@@ -109,6 +110,23 @@ public class GameClientGUI extends JFrame implements ActionListener {
 			else if (state == Game.state.oh) {
 				button[i].setEnabled(false);
 				button[i].setText("O");
+			}
+		}
+		turn = states[9];
+		disable();
+	}
+	
+	public void disable(){
+		if(turn != Game.state.your_turn){
+			for(int i = 0; i<9; i++){
+				button[i].setEnabled(false);
+			}
+		} 
+		else {
+			for(int i = 0; i<9; i++){
+				if(button[i].getText().equals("")){
+					button[i].setEnabled(true);
+				}
 			}
 		}
 	}
