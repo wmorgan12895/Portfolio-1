@@ -1,10 +1,13 @@
 package pkg1;
 
-public class Game {
+import java.io.Serializable;
 
-	private enum state { empty, ex, oh }
+public class Game implements Serializable{
+
+	protected enum state { empty, ex, oh }
 	private state[] board;
 	private int moves;
+	private String[] messages = {"Your turn" , "You're opponent's turn" , "You've won!" , "You've lost!"};
 	
 	public Game() {
 		board = new state[9];
@@ -27,6 +30,18 @@ public class Game {
 			board[space] = state.oh;
 		}
 		moves++;
+	}
+	
+	public state[] getBoard() {
+		state[] states = new state[9];
+		for (int i = 0; i < 9; i++) {
+			states[i] = board[i];
+		}
+		return states;
+	}
+	
+	public state getState(int i) {
+		return board[i];
 	}
 	
 	//determines if there is a victor and returns the number of the victorious player. Returns 0 if no victor, 3 if draw.

@@ -53,6 +53,10 @@ public class GameClientGUI extends JFrame implements ActionListener {
 			Thread t = new Thread(ct);
 			t.start();
 			
+			Listener listener = new Listener(gc, ct);
+			Thread lt = new Thread(listener);
+			lt.start();
+			
 		} catch (UnknownHostException e) {
 			//e.printStackTrace();
 		} catch (IOException e) {
@@ -92,6 +96,20 @@ public class GameClientGUI extends JFrame implements ActionListener {
 		}
 		else{
 			System.out.println("working?");
+		}
+	}
+	
+	public void update(Game.state[] states) {
+		for (int i = 0; i < 9; i++) {
+			Game.state state = states[i];
+			if (state == Game.state.ex) {
+				button[i].setEnabled(false);
+				button[i].setText("X");
+			}
+			else if (state == Game.state.oh) {
+				button[i].setEnabled(false);
+				button[i].setText("O");
+			}
 		}
 	}
 }
