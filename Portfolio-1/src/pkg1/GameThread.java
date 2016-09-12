@@ -38,8 +38,10 @@ public class GameThread implements Runnable {
 			try {
 				move1 = (int)player1.getInStr().readObject();
 				game.move(move1, 1);
-				player1.getOutStr().writeObject(game.board);
 				System.out.println("X player moves " + move1);
+				Game.state[] board = game.getBoard();
+				player1.getOutStr().writeObject(board);
+				player2.getOutStr().writeObject(board);
 				victor = game.victor();
 				if (victor == 1) {
 					gameOver = true;
@@ -54,6 +56,9 @@ public class GameThread implements Runnable {
 				move2 = (int)player2.getInStr().readObject();
 				game.move(move2, 2);
 				System.out.println("O player moves " + move2);
+				board = game.getBoard();
+				player1.getOutStr().writeObject(board);
+				player2.getOutStr().writeObject(board);
 				victor = game.victor();
 				if (victor == 2) {
 					gameOver = true;
