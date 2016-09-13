@@ -17,13 +17,16 @@ public class GameClientGUI extends JFrame implements ActionListener {
 	private JPanel contentPane;
 	private JButton[] button;
 	private JPanel gameBoard;
-	private ClientThread ct;
+	public ClientThread ct;
 	public Game.state turn;
 	private JTextArea text;
+	private String num;
 	private JButton quit;
+	public Game.state[] states;
 	
 	public GameClientGUI(ClientThread ct){
 		this.ct = ct;
+		num = "";
 		setTitle("Tic Tac Toe");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 450, 475);
@@ -48,24 +51,28 @@ public class GameClientGUI extends JFrame implements ActionListener {
 		text.setText("Please wait for your opponent");
 		contentPane.add(text, BorderLayout.NORTH);
 		
-		quit = new JButton();
-		quit.setText("Quit");
-		contentPane.add(quit, BorderLayout.SOUTH);
-		quit.setEnabled(true);
-		quit.addActionListener(this);
+//		quit = new JButton();
+//		quit.setText("Quit");
+//		contentPane.add(quit, BorderLayout.SOUTH);
+//		quit.setEnabled(true);
+//		quit.addActionListener(this);
 		
 		
 	}
 	
 	public static void main(String[] args){
 		
-			
 			Socket serverSocket;
 			try {
 				serverSocket = new Socket("localhost", 4444);
 				ClientThread ct = new ClientThread(serverSocket);
-				MenuGUI menu = new MenuGUI(ct);
-				menu.setVisible(true);
+				GameClientGUI gc = new GameClientGUI(ct);
+				gc.setVisible(true);
+				Thread t = new Thread(ct);
+				t.start();
+				Listener listener = new Listener(gc, ct);
+				Thread lt = new Thread(listener);
+				lt.start();
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -108,36 +115,59 @@ public class GameClientGUI extends JFrame implements ActionListener {
 		}
 	}
 	
-	public void update(Game.state[] states) {
-		for (int i = 0; i < 9; i++) {
-			Game.state state = states[i];
-			if (state == Game.state.ex) {
-				button[i].setEnabled(false);
-				button[i].setText("X");
-			}
-			else if (state == Game.state.oh) {
-				button[i].setEnabled(false);
-				button[i].setText("O");
-			}
-		}
-		turn = states[9];
-		disable();
+	public void setNum(int game_num){
+		num = "Game number: " + game_num + "\n";
 	}
 	
+	public void update(Game.state[] states) {
+		this.states = states;
+		if(states != null){
+			for (int i = 0; i < 9; i++) {
+				Game.state state = states[i];
+				if (state == Game.state.ex) {
+					button[i].setEnabled(false);
+					button[i].setText("X");
+				}
+				else if (state == Game.state.oh) {
+					button[i].setEnabled(false);
+					button[i].setText("O");
+				}
+			}
+			turn = states[9];
+			disable();
+		}
+		else{
+			//this.setVisible(false);
+			MenuGUI menu = new MenuGUI(this);
+			menu.setVisible(true);
+		}
+	}
+	
+	
 	public void disable(){
-		if(turn != Game.state.your_turn){
+		
+		if(turn == Game.state.not_turn){
 			for(int i = 0; i<9; i++){
 				button[i].setEnabled(false);
-				text.setText("Please wait for your opponent");
+				text.setText(num + "Please wait for your opponent");
 			}
 		} 
-		else {
+		else if(turn == Game.state.your_turn){
 			for(int i = 0; i<9; i++){
 				if(button[i].getText().equals("")){
 					button[i].setEnabled(true);
 				}
-				text.setText("Your turn");
+				text.setText(num + "Your turn");
 			}
+		}
+		else if(turn == Game.state.you_win){
+			text.setText(num + "You Win!");
+		}
+		else if(turn == Game.state.you_lose){
+			text.setText(num + "You Lose!");
+		}
+		else if(turn == Game.state.draw){
+			text.setText(num + "Cats Game!");
 		}
 	}
 }
