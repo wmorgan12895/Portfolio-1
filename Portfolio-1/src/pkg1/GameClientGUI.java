@@ -1,16 +1,17 @@
 package pkg1;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 public class GameClientGUI extends JFrame implements ActionListener {
 	private JPanel contentPane;
@@ -18,54 +19,61 @@ public class GameClientGUI extends JFrame implements ActionListener {
 	private JPanel gameBoard;
 	private ClientThread ct;
 	public Game.state turn;
+	private JTextArea text;
+	private JButton quit;
 	
 	public GameClientGUI(ClientThread ct){
 		this.ct = ct;
-		setTitle("Client");
+		setTitle("Tic Tac Toe");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(0, 0, 450, 450);
+		setBounds(0, 0, 450, 475);
 		contentPane = new JPanel();
 		//contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		contentPane.setLayout(new BorderLayout());
 		
 		gameBoard = new JPanel();
 		gameBoard.setLayout(new GridLayout(3,3));
 		gameBoard.setBounds(0, 0, 433, 404);
 		contentPane.add(gameBoard);
 		button = new JButton[9];
-		for(int i = 0; i<9; i++){
+		for(int i = 0; i < 9; i++){
 			button[i] = new JButton();
 			gameBoard.add(button[i]);
 			button[i].setEnabled(true);
 			button[i].addActionListener(this);
 		}
 		
+		text = new JTextArea(5,10);
+		text.setText("Please wait for your opponent");
+		contentPane.add(text, BorderLayout.NORTH);
+		
+		quit = new JButton();
+		quit.setText("Quit");
+		contentPane.add(quit, BorderLayout.SOUTH);
+		quit.setEnabled(true);
+		quit.addActionListener(this);
+		
+		
 	}
 	
 	public static void main(String[] args){
 		
-		try {
 			
-			Socket serverSocket = new Socket("localhost", 4444);
-			ClientThread ct = new ClientThread(serverSocket);
-			GameClientGUI gc = new GameClientGUI(ct);
-			gc.setVisible(true);
-			Thread t = new Thread(ct);
-			t.start();
-			
-			Listener listener = new Listener(gc, ct);
-			Thread lt = new Thread(listener);
-			lt.start();
-			
-		} catch (UnknownHostException e) {
-			//e.printStackTrace();
-		} catch (IOException e) {
-			//e.printStackTrace();
-			System.out.println("Client could not connect");
-		}
+			Socket serverSocket;
+			try {
+				serverSocket = new Socket("localhost", 4444);
+				ClientThread ct = new ClientThread(serverSocket);
+				MenuGUI menu = new MenuGUI(ct);
+				menu.setVisible(true);
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == button[0]){
@@ -120,6 +128,7 @@ public class GameClientGUI extends JFrame implements ActionListener {
 		if(turn != Game.state.your_turn){
 			for(int i = 0; i<9; i++){
 				button[i].setEnabled(false);
+				text.setText("Please wait for your opponent");
 			}
 		} 
 		else {
@@ -127,6 +136,7 @@ public class GameClientGUI extends JFrame implements ActionListener {
 				if(button[i].getText().equals("")){
 					button[i].setEnabled(true);
 				}
+				text.setText("Your turn");
 			}
 		}
 	}
