@@ -40,23 +40,11 @@ public class GameServer {
 				System.out.println("Waiting on player 1 to connect");
 				socket1 = serverSocket.accept();
 				player1 = new Player(socket1);
-				inQueue.add(player1);
 				System.out.println("Waiting on player 2 to connect");
-				
-				if(inQueue.size()==1){
-					socket2 = serverSocket.accept();
-					player2 = new Player(socket2);
-					inGame.add(player1);
-					inGame.add(player2);
-					inQueue.remove(player1);
-				} else {
-					player1 = inQueue.get(0);
-					player2 = inQueue.get(1);
-					inGame.add(inQueue.get(0));
-					inGame.add(inQueue.get(1));
-					inQueue.remove(1);
-					inQueue.remove(0);
-				}
+				socket2 = serverSocket.accept();
+				player2 = new Player(socket2);
+				inGame.add(player1);
+				inGame.add(player2);
 				game_num+=1;
 				GameThread game = new GameThread(this, player1, player2, game_num);
 				System.out.println("Launching thread");

@@ -17,11 +17,12 @@ public class GameClientGUI extends JFrame implements ActionListener {
 	private JPanel contentPane;
 	private JButton[] button;
 	private JPanel gameBoard;
-	private ClientThread ct;
+	public ClientThread ct;
 	public Game.state turn;
 	private JTextArea text;
 	private String num;
 	private JButton quit;
+	public Game.state[] states;
 	
 	public GameClientGUI(ClientThread ct){
 		this.ct = ct;
@@ -50,11 +51,11 @@ public class GameClientGUI extends JFrame implements ActionListener {
 		text.setText("Please wait for your opponent");
 		contentPane.add(text, BorderLayout.NORTH);
 		
-		quit = new JButton();
-		quit.setText("Quit");
-		contentPane.add(quit, BorderLayout.SOUTH);
-		quit.setEnabled(true);
-		quit.addActionListener(this);
+//		quit = new JButton();
+//		quit.setText("Quit");
+//		contentPane.add(quit, BorderLayout.SOUTH);
+//		quit.setEnabled(true);
+//		quit.addActionListener(this);
 		
 		
 	}
@@ -65,8 +66,13 @@ public class GameClientGUI extends JFrame implements ActionListener {
 			try {
 				serverSocket = new Socket("localhost", 4444);
 				ClientThread ct = new ClientThread(serverSocket);
-				MenuGUI menu = new MenuGUI(ct);
-				menu.setVisible(true);
+				GameClientGUI gc = new GameClientGUI(ct);
+				gc.setVisible(true);
+				Thread t = new Thread(ct);
+				t.start();
+				Listener listener = new Listener(gc, ct);
+				Thread lt = new Thread(listener);
+				lt.start();
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -114,6 +120,7 @@ public class GameClientGUI extends JFrame implements ActionListener {
 	}
 	
 	public void update(Game.state[] states) {
+		this.states = states;
 		if(states != null){
 			for (int i = 0; i < 9; i++) {
 				Game.state state = states[i];
@@ -130,10 +137,9 @@ public class GameClientGUI extends JFrame implements ActionListener {
 			disable();
 		}
 		else{
-			for (int i = 0; i < 9; i++) {
-			button[i].setEnabled(true);
-			button[i].setText("");	
-			}
+			//this.setVisible(false);
+			MenuGUI menu = new MenuGUI(this);
+			menu.setVisible(true);
 		}
 	}
 	

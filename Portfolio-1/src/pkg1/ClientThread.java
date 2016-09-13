@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientThread implements Runnable{
-	private ObjectOutputStream outStr;
+	public ObjectOutputStream outStr;
 	private Socket sock;
 	
 	public ClientThread(Socket s){
@@ -57,9 +57,9 @@ class Listener implements Runnable {
 			this.socket = ct.getSocket();
 			this.outStr = ct.getOutStream();
 			inStr = new ObjectInputStream(socket.getInputStream());
-//			int game_num = (int) inStr.readObject();
-//			gui.setNum(game_num);
-		} catch (IOException e) {
+			int game_num = (int) inStr.readObject();
+			gui.setNum(game_num);
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}

@@ -40,12 +40,12 @@ public class GameThread implements Runnable {
 	public void run(){
 		player1.setGame(game);
 		player2.setGame(game);
-//		try {
-//			player1.getOutStr().writeObject(game_num);
-//			player2.getOutStr().writeObject(game_num);
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
+		try {
+			player1.getOutStr().writeObject(game_num);
+			player2.getOutStr().writeObject(game_num);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
 		int move1 = 0;
 		int move2 = 0;
@@ -97,22 +97,19 @@ public class GameThread implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		if(!kill){
+			handleQuit();
+		}
 	}
 	
 	private void handleQuit(){
 		try {
 			player1.getOutStr().writeObject(null);
-			server.getInGame().remove(player1);
-			server.getInQueue().add(player1);
 		} catch (IOException e) {
-			server.getInGame().remove(player1);
 		}
 		try {
 			player2.getOutStr().writeObject(null);
-			server.getInGame().remove(player2);
-			server.getInQueue().add(player2);
 		} catch (IOException e) {
-			server.getInGame().remove(player2);
 		}
 	}
 }
