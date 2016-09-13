@@ -11,13 +11,12 @@ public class Player {
 	
 	private Socket sock;
 	private boolean xPlayer;
-	private ObjectInputStream inStr;
-	private ObjectOutputStream outStr;
+	private ObjectInputStream inStr = null;
+	private ObjectOutputStream outStr = null;
 	private Game game;
 	
-	public Player(Socket s, boolean xPlayer){
+	public Player(Socket s){
 		sock = s;
-		this.xPlayer = xPlayer;
 		try {
 			outStr = new ObjectOutputStream(sock.getOutputStream());
 			outStr.flush();
@@ -29,6 +28,9 @@ public class Player {
 		
 	}
 
+	public void setXplay(boolean xPlayer) {
+		this.xPlayer = xPlayer;
+	}
 	public Socket getSock() {
 		return sock;
 	}
@@ -45,6 +47,21 @@ public class Player {
 		} 
 		else if(!xPlayer && board[9] == state.oh_turn){
 			board[9] = state.your_turn;
+		}
+		else if(xPlayer && board[9] == state.ex_win){
+			board[9] = state.you_win;
+		}
+		else if(!xPlayer && board[9] == state.oh_win){
+			board[9] = state.you_win;
+		}
+		else if(!xPlayer && board[9] == state.ex_win){
+			board[9] = state.you_lose;
+		}
+		else if(xPlayer && board[9] == state.oh_win){
+			board[9] = state.you_lose;
+		}
+		else if(board[9] == state.draw){
+			board[9] = state.draw;
 		}
 		else{
 			board[9] = state.not_turn;

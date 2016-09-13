@@ -8,45 +8,60 @@ public class GameThread implements Runnable {
 	Player player1;
 	Player player2;
 	Game game;
-	
-	public GameThread(Socket socket1, Socket socket2){
-		makePlayers(socket1, socket2);
+	int game_num;
+	GameServer server;
+	boolean kill;
+	public GameThread(GameServer server, Player player1, Player player2, int game_num){
+		this.player1 = player1;
+		this.player2 = player2;
+		makePlayers();
+		kill = false;
+		this.server = server;
+		this.game_num = game_num;
 		game = new Game();
 	}
 	
-	private void makePlayers(Socket socket1, Socket socket2){
+	private void makePlayers(){
 		Random rand = new Random();
 		int pick = rand.nextInt(1);
 		if(pick == 0){
-			player1 = new Player(socket1, true);
-			player2 = new Player(socket2, false);
+			player1.setXplay(true);
+			player2.setXplay(false);
 		}
 		else{
-			player1 = new Player(socket2, true);
-			player2 = new Player(socket1, false);
+			player1.setXplay(false);
+			player2.setXplay(true);
 		}
 		
 	}
+	
 	
 	@Override
 	public void run(){
 		player1.setGame(game);
 		player2.setGame(game);
+//		try {
+//			player1.getOutStr().writeObject(game_num);
+//			player2.getOutStr().writeObject(game_num);
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
+		
 		int move1 = 0;
 		int move2 = 0;
 		int victor = 0;
 		boolean gameOver = false;
-		while (!gameOver) {
+		while (!gameOver && !kill) {
 			try {
-				 
 				player1.getOutStr().writeObject(player1.getBoard());
 				player2.getOutStr().writeObject(player2.getBoard());
 				move1 = (int)player1.getInStr().readObject();
 				game.move(move1, 1);
 				System.out.println("X player moves " + move1);
+				victor = game.victor();
 				player1.getOutStr().writeObject(player1.getBoard());
 				player2.getOutStr().writeObject(player2.getBoard());
-				victor = game.victor();
+				
 				if (victor == 1) {
 					gameOver = true;
 					System.out.println("X player wins!");
@@ -60,9 +75,10 @@ public class GameThread implements Runnable {
 				move2 = (int)player2.getInStr().readObject();
 				game.move(move2, 2);
 				System.out.println("O player moves " + move2);
+				victor = game.victor();
 				player1.getOutStr().writeObject(player1.getBoard());
 				player2.getOutStr().writeObject(player2.getBoard());
-				victor = game.victor();
+				
 				if (victor == 2) {
 					gameOver = true;
 					System.out.println("O player wins!");
@@ -75,9 +91,28 @@ public class GameThread implements Runnable {
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				kill = true;
+				handleQuit();
+				System.out.println("Player Quit Ending Thread");
 				e.printStackTrace();
 			}
 		}
 	}
 	
+	private void handleQuit(){
+		try {
+			player1.getOutStr().writeObject(null);
+			server.getInGame().remove(player1);
+			server.getInQueue().add(player1);
+		} catch (IOException e) {
+			server.getInGame().remove(player1);
+		}
+		try {
+			player2.getOutStr().writeObject(null);
+			server.getInGame().remove(player2);
+			server.getInQueue().add(player2);
+		} catch (IOException e) {
+			server.getInGame().remove(player2);
+		}
+	}
 }

@@ -57,6 +57,8 @@ class Listener implements Runnable {
 			this.socket = ct.getSocket();
 			this.outStr = ct.getOutStream();
 			inStr = new ObjectInputStream(socket.getInputStream());
+//			int game_num = (int) inStr.readObject();
+//			gui.setNum(game_num);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -67,11 +69,10 @@ class Listener implements Runnable {
 			//read board
 			Game.state[] game = null;
 			try {
-					game = (Game.state[]) inStr.readObject();
-				}
-			catch (ClassNotFoundException e) {
+				game = (Game.state[]) inStr.readObject();
+			}catch(ClassNotFoundException e){
 				e.printStackTrace();
-			} catch (IOException e) {
+			}catch (IOException e) {
 				e.printStackTrace();
 			}
 			

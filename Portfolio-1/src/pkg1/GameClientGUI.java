@@ -20,10 +20,12 @@ public class GameClientGUI extends JFrame implements ActionListener {
 	private ClientThread ct;
 	public Game.state turn;
 	private JTextArea text;
+	private String num;
 	private JButton quit;
 	
 	public GameClientGUI(ClientThread ct){
 		this.ct = ct;
+		num = "";
 		setTitle("Tic Tac Toe");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 450, 475);
@@ -59,7 +61,6 @@ public class GameClientGUI extends JFrame implements ActionListener {
 	
 	public static void main(String[] args){
 		
-			
 			Socket serverSocket;
 			try {
 				serverSocket = new Socket("localhost", 4444);
@@ -108,36 +109,59 @@ public class GameClientGUI extends JFrame implements ActionListener {
 		}
 	}
 	
-	public void update(Game.state[] states) {
-		for (int i = 0; i < 9; i++) {
-			Game.state state = states[i];
-			if (state == Game.state.ex) {
-				button[i].setEnabled(false);
-				button[i].setText("X");
-			}
-			else if (state == Game.state.oh) {
-				button[i].setEnabled(false);
-				button[i].setText("O");
-			}
-		}
-		turn = states[9];
-		disable();
+	public void setNum(int game_num){
+		num = "Game number: " + game_num + "\n";
 	}
 	
+	public void update(Game.state[] states) {
+		if(states != null){
+			for (int i = 0; i < 9; i++) {
+				Game.state state = states[i];
+				if (state == Game.state.ex) {
+					button[i].setEnabled(false);
+					button[i].setText("X");
+				}
+				else if (state == Game.state.oh) {
+					button[i].setEnabled(false);
+					button[i].setText("O");
+				}
+			}
+			turn = states[9];
+			disable();
+		}
+		else{
+			for (int i = 0; i < 9; i++) {
+			button[i].setEnabled(true);
+			button[i].setText("");	
+			}
+		}
+	}
+	
+	
 	public void disable(){
-		if(turn != Game.state.your_turn){
+		
+		if(turn == Game.state.not_turn){
 			for(int i = 0; i<9; i++){
 				button[i].setEnabled(false);
-				text.setText("Please wait for your opponent");
+				text.setText(num + "Please wait for your opponent");
 			}
 		} 
-		else {
+		else if(turn == Game.state.your_turn){
 			for(int i = 0; i<9; i++){
 				if(button[i].getText().equals("")){
 					button[i].setEnabled(true);
 				}
-				text.setText("Your turn");
+				text.setText(num + "Your turn");
 			}
+		}
+		else if(turn == Game.state.you_win){
+			text.setText(num + "You Win!");
+		}
+		else if(turn == Game.state.you_lose){
+			text.setText(num + "You Lose!");
+		}
+		else if(turn == Game.state.draw){
+			text.setText(num + "Cats Game!");
 		}
 	}
 }
