@@ -21,7 +21,7 @@ public class GameClientGUI extends JFrame implements ActionListener {
 	public Game.state turn;
 	private JTextArea text;
 	private String num;
-	private JButton quit;
+	private JButton newGame;
 	public Game.state[] states;
 	
 	public GameClientGUI(ClientThread ct){
@@ -51,11 +51,12 @@ public class GameClientGUI extends JFrame implements ActionListener {
 		text.setText("Please wait for your opponent");
 		contentPane.add(text, BorderLayout.NORTH);
 		
-//		quit = new JButton();
-//		quit.setText("Quit");
-//		contentPane.add(quit, BorderLayout.SOUTH);
-//		quit.setEnabled(true);
-//		quit.addActionListener(this);
+		newGame = new JButton();
+		newGame.setVisible(false);
+		newGame.setText("Play Again");
+		contentPane.add(newGame, BorderLayout.SOUTH);
+		newGame.setEnabled(true);
+		newGame.addActionListener(this);
 		
 		
 	}
@@ -110,6 +111,26 @@ public class GameClientGUI extends JFrame implements ActionListener {
 		else if(e.getSource() == button[8]){
 			ct.send(8);
 		}
+		else if(e.getSource() == newGame){
+			Socket serverSocket;
+			this.setVisible(false);
+			try {
+				serverSocket = new Socket("localhost", 4444);
+				ClientThread ct = new ClientThread(serverSocket);
+				GameClientGUI gc = new GameClientGUI(ct);
+				gc.setVisible(true);
+				Thread t = new Thread(ct);
+				t.start();
+				Listener listener = new Listener(gc, ct);
+				Thread lt = new Thread(listener);
+				lt.start();
+				this.setVisible(false);
+			} catch (UnknownHostException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 		else{
 			System.out.println("working?");
 		}
@@ -137,9 +158,7 @@ public class GameClientGUI extends JFrame implements ActionListener {
 			disable();
 		}
 		else{
-			//this.setVisible(false);
-			MenuGUI menu = new MenuGUI(this);
-			menu.setVisible(true);
+			newGame.setVisible(true);
 		}
 	}
 	

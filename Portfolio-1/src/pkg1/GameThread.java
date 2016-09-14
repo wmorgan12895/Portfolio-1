@@ -1,7 +1,6 @@
 package pkg1;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.Random;
 
 public class GameThread implements Runnable {
