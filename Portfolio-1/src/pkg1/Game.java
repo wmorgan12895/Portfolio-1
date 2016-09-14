@@ -7,7 +7,6 @@ public class Game implements Serializable{
 	protected enum state { empty, ex, oh, ex_turn, oh_turn, your_turn, not_turn, ex_win, oh_win, you_win, you_lose, draw }
 	private state[] board;
 	private int moves;
-	private String[] messages = {"Your turn" , "You're opponent's turn" , "You've won!" , "You've lost!"};
 	
 	public Game() {
 		board = new state[10];
